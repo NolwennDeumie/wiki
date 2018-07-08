@@ -4,54 +4,71 @@ description: "Documentation de l'onglet Tilesets pour RPG Maker VX Ace et MV."
 og_image: "/assets/default_opengraph.png"
 ---
 
+Les **tilesets** sont des collections de **tiles** (ou tuiles en Français) qu'on utilise pour créer des **maps**. Avant de rentrer dans le détail de cette catégorie, il vaut mieux parler des **maps** et de certaines spécifications concernant les images utilisées pour créer un **tileset**.
 
-What are Maps?
+## Qu'est-ce qu'une map ?
 
-Maps are the data that represent the setting for your game. Maps will unfold based on where a character moves on the map when playing the game.
+Votre jeu se passe dans un certain univers imaginaire, ou basé sur notre réalité. De cet univers est issu un monde, avec sa géographie, ses peuples, ses interactions. Du point de vue du scénariste, ce monde est représenté sous forme de données appelées **maps**. Du point de vue du développeur, les **maps** sont les différents niveaux de jeu que votre joueur va parcourir.
 
-A map's design is edited by placing together parts using for composing your map called "Tiles".
-Map Basic Specifications
-Role of Tiles
+La manière classique de créer une **map** sur RPG Maker est de placer des **tiles** sur une grille. Les **tiles** sont ces petits carrés de texture de 32x32 px (pour Ace) ou 48x48 px (pour MV) visibles dans la partie supérieure gauche de l'éditeur (également appelée palette).
 
-Tiles are images which give a map its appearance, and are configured to allow or not allow a character to move across that tile.
+## Spécifications d'une map
 
-In one map, multiple tiles grouped together assigned to be one piece of data are called a "Tileset", which is used as the basis of designing the shape of a map. You can instantly change the appearance of a map by changing the tileset you are using. The contents of a tileset can be edited using the [Database].
-Tile Classifications
+### Le rôle des tiles
 
-It is possible to include 5 types of tiles for A through E in one tileset. A is the lower layer which represents the terrain and ground, and B through E are upper layer tiles which represent surface elements such as trees and bushes or sign boards.
+Les **tiles** sont des images qui sont utilisés pour donner à la **map** son apparence. Ils sont en plus configurés pour être traversables, ou au contraire bloquants, pour le personange et les événements (c'est ce qu'on appelle leur passabilité)
 
-It is possible to place an upper layer and lower layer tile on the same location on the map. By using this two-layer composition, it is possible to create a very detailed and intricate map.
+On associe à une **map** donnée un **tileset** : un fichier de données qui regroupe à la fois les iamges des *tiles*, mais également leur passabilité et d'autres données de configuration. Il est possible de changer instantanément l'apparence de la *map* en changeant son *tileset*. On verra plus loin comment on configure un tileset dans la base de données.
 
-As a standard, tiles that represent things such as the ocean, grasslands, floors and walls are the lower layer tiles, and upper layer tiles used to decorate those layers are provided.
-Moreover, it is now possible to overlap two types of upper layer tiles allowing for more variation in this version.
+Note : il est très facile de faire la confusion entre ce qu'on appelle communément les **tilesets** sur les forums (ces images constituées de plusieurs **tiles**) et ce qu'on appelle **tileset** dans l'éditeur (un fichier de données constitué entre autres de ces images).
+
+### Classification des tiles
+
+Quel que soit l'éditeur utilisé (Ace ou MV), il est possible d'inclure jusqu'à 5 types de **tiles** dans un **tileset**, divisés en 5 onglets A, B, C, D et E. L'onglet A est réservé à la couche inférieure, celle utilisée habituellement pour représenter le sol et les murs. Les onglets B à E sont tous réservés à la couche supérieure, qui sert à placer les éléments de décoration tels qu'arbres et buissons.
+
+Il est tout à fait possible de palcer un tile de couche inférieure et un tile de couche supérieure sur le même emplacement sur la map (dans cet ordre précisément !). Maitriser cette combinaison d'éléments de couche basse et de couche haute eprmet de créer des **maps** très détaillées.
+
+Il a été défini comme standard que :
+
+* les tiles représentant des étendues d'eau, des sols naturels (herbe, terre, sable), les sols et les murs sont réservés à la couche basse (et donc à l'onglet A) ;
+* les tiles servant à décorer, embellir les tiles précédents sont réservés à la couche haute (et donc aux onglets B, C, D et E).
+
+Spécificité de RPG Maker MV : il est possible de superposer deux tiles de la couche supérieure l'un sur l'autre pour créer un **tile combiné**. Ceci permet d'apporter plus de variations sur la **map** mais cette utilisation doit s'accompagner de quelques précautions. Ce sera détaillé plus loin.
+
+### Quelques fonctionnalités avancées
+
+* **Les autotiles** : dans l'onglet A de la palette, certains **tiles** ont un comportement particulier. On les appelle des **autotiles**. Ces éléments sont codés de manière à former automatiquement une bordure en fonction de la façon dont ils sont placés. C'est un sacré gain de temps, mais ça peut également être une nuisance. Pour annuler la formation automatique de la bordure, il suffit de maintenir le bouton `Shift` lorsqu'on place l'**autotile**. Ceci conduit à une technique avancée qui sera détaillée plus loin. Pour terminer sur les **autotiles**, ils représentent les sous-catégories A1, A2, A3 et A4 du **tileset** en base de données.
+
+* **Les ombres automatiques** : certains **tiles** de l'onglet A projettent automatiquement une ombre si on en place deux ou plus verticalement. Attention cependant, l'ombre en sera projetée que sur les éléments de la couche basse. Les éléments de la couche haute ne seront pas affectés. Pour rectifier d'éventuelles ombres manquantes (ou pour les retirer), il suffit de sélectionner le `pinceau ombre` dans les outils de dessin et dessiner des ombres supplémentaires. Ce pinceau a la particularité de placer une ombre qui fait 1/4 de la taille d'un **tile**. Pour retirer une ombre, il suffit de cliquer sur l'ombre à retirer avec ce pinceau.
+
+## Spécifications particulières des tiles
+
+### Tiles de la couche inférieure
+
+En réalité, la couche inférieure est composée de deux sous-couches : la *base* et la *couche d'embellissement*. Quasiment l'intégralité des **tiles** de la couche A iront sur la *base*. Les seuls **tiles** concernés par la *couche d'embellissement* sont les tous les **tiles** de la moitié droite de la sous-catégorie A2 du **tileset** en base de données. Ces **tiles** peuvent se placer au-dessus de ceux de la *base*, un peu comme on place habituellement les **tiles** de la couche supérieure sur ceux de la couche inférieure.
+
+En réalité, ceci est le fonctionnement des **tilesets** configurés en mode `REMPLACER` en base de données. Pour tous les **tilesets** configurés avec le mode `World type`, les **tiles** placés en 2ème colonne ou 4ème colonne verront le **tile** de base invariablement changer pour le **tile** de la 1ère colonne ou de la 3ème colonne.
+
+### Tiles de la couche supérieure
+
+De la même manière, on peut considérer que la couche supérieure est composée de deux sous-couches. Ici, elles ne sont pas spécialement nommées, il suffit de se rappeler que lorsqu'on place un **tile** sur un emplacement donné, il va sur la sous-couche la plus haute. S'il y a déjà un **tile**, ce dernier passe sur la sous-couche du dessous et le nouveau prend sa place sur celle du dessus. C'est comme cela qu'on crée des **tiles combinés**.
+
+Si on rajoute un troisième **tile**, celui de la sous-couche inférieure disparait, celui de la sous-couche supérieure passe en dessous et le 3ème **tile** se palce sur la sous-couche supérieure. Sauf si le 3ème **tile** est identique à celui de la sous-couche supérieure, auquel cas il ne se passe rien.
+
+Le fonctionnement est simple, mais il est nécessaire de prendre quelques précautions.
+
+1. TOUJOURS effacer avec le **tile** tout en haut à gauche de l'onglet B. Ne jamais utiliser un autre **tile**, même s'il est lui aussi transparent. Ce fameux **tile** a la propriété de vider intégralement les deux sous-couches à la fois. Par ailleurs, il assure que la passabilité de la **map** à cet emplacement précis sera celle du **tile** en couche basse. À cet effet, NE JAMAIS MODIFIER la passabilité ☆ de ce **tile** spécial.
+1. Lorsqu'on combine deux tiles de passabilités différentes, la passabilité qui en résulte est celle du tile le plus en haut.
+1. Exception à la règle précédente : si un des deux **tiles** a la passabilité ☆, alors la passabilité résultante sera toujours celle de l'autre **tile**, peu importe lequel est au-dessus et lequel est au-dessous.
+1. Enfin, et ceci est une source d'erreurs fréquentes, si le **tile** le plus en dessous a une passabilité ☆ (et que celui au-dessus n'a pas de passabilité ☆), il sera affiché au-dessus en jeu, même s'il apparait bien au-dessous dans l'éditeur !
+
+## Configurer un Tileset en base de données
+
+### Rôle du tileset
 
 
-Other Editing Functions
 
-Autotile
-    A feature called [Autotile] is included in the tiles displayed in the A tab of the Tile Palette. With autotiles, one type of tile contains several patterns, and the border of the tile will be adjusted automatically depending on how the tiles are placed. Tiles which have the autotile function are assigned to [A1] through [A4] in the database [Tilesets].
 
-    Moreover, you can temporarily disable the autotile function by holding [Shift] and drawing tiles or using the eyedropper. 
-Autoshadows
-    Within autotiles, by placing two or more tiles vertically, a shadow will automatically be drawn to the bottom right of that tile. However, specified tiles will not have shadows drawn on them.
-Shadow Pen
-    The Shadow Pen is a tool that allows you to draw shadows for walls and buildings. You can darken the hue by 1/4th of the size of a tile.
-
-    Click the [Shadow Pen] button on the toolbar (or go to [Draw] → [Shadow Pen] in the menu), and click on the Map View. A shadow is drawn by clicking on a part which has no shadow, and by clicking a part which already has a shadow, that shadow will be removed.
-Upper Layer Tile Special Specifications
-
-        You can layer 2 different types on the upper maps B-E.
-        * When layering a 3rd tile, the 1st upper tile will disappear.
-        * When the 3rd tile layered is the same as the 2nd tile, the first tile will not disappear.
-        * Only the upper left B tile can erase all upper tiles.
-        When a passable tile and an impassable tile are layered, the effect of the tile layered last takes priority.
-        * Even when a passable ☆ tile is on the bottom, the tile with the ☆ will be displayed on top.
-        * When a passable ☆ tile is layered, the impassable tile's effect will take priority.
-
-Lower Layer Tile Special Specifications
-    Amongst the tiles that are displayed in the [A] tab of the Tile Palette, those items found in [A2] in the tileset properties are divided into [Base] (tiles 1 to 4 from the left, or the left half) and [Decoration] tiles (tiles 5 to 8 from the left, or the right half). Decoration tiles can be placed on top of base tiles.
-
-    However, for those [Tilesets] which have their [Mode] set to [World Type] in the tileset properties, when placing a decoration tile that is stacked on a 2nd or 4th base tile, the base tile will change either the 1st or 3rd base tile. 
 
 Tileset Settings
 
@@ -122,6 +139,33 @@ Note
 
 The [Note] section can be used to make notes while making your game.
 Right-click to show the menu and choose [Plugin Help...] to display the Plugin Help.
+
+## Spécifications MV concernant les images
+
+Note : ce qui suit est intégralement dédié à MV. Je laisse qui veut créer les templates pour VX Ace.
+
+### Informations préalables
+
+* un **tile** fait 48x48 px
+* les **tiles** doivent être assemblés sous formes d'images constituant 5 groupes : A, B, C D et E
+* le groupe A est constitué de plusieurs images et subdivisé en A1, A2, A3, A4 et A5
+* la taille des images est fixe
+
+### Groupe/onglet A
+
+Rappel : le groupe A contient l'ensemble des **tiles** qui vont constituer la couche basse d'une **map**
+
+Les images qui constituent les sous-groupes A1, A2, A3 et A4 sont des assemblages d'**autotiles**. Ci-dessous, un **autotile**, un élément constitué en réalité de six **tiles** :
+
+*Image*
+
+* a. l'**autotile** tel qu'il apparait dans la palette (dimensions d'un **tile**)
+* b. motif avec les bordures à chaque coin (dimensions d'un **tile**)
+* c. motif avec les bordures dans les 8 directions (dimensions d'un carré de quatre **tiles**)
+
+Plus précisément, pour les graphistes, considérez que l'**autotile** est découpé ainsi :
+
+
 
 
 Tileset Details
