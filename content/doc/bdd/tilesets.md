@@ -6,6 +6,14 @@ og_image: "/assets/default_opengraph.png"
 
 Les **tilesets** sont des collections de **tiles** (ou tuiles en Français) qu'on utilise pour créer des **maps**. Avant de rentrer dans le détail de cette catégorie, il vaut mieux parler des **maps** et de certaines spécifications concernant les images utilisées pour créer un **tileset**.
 
+## Menu
+
+* [Qu'est-ce qu'une map ?]({{< ref "#qu-est-ce-qu-une-map" >}})
+* [Spécifications d'une map]({{< ref "#spécifications-d-une-map" >}})
+* [Spécifications particulières des tiles]({{< ref "#spécifications-particulières-des-tiles" >}})
+* [Configurer un Tileset en base de données]({{< ref "#configurer-un-tileset-en-base-de-données" >}})
+* [Spécifications MV concernant les images]({{< ref "#spécifications-mv-concernant-les-images" >}})
+
 ## Qu'est-ce qu'une map ?
 
 Votre jeu se passe dans un certain univers imaginaire, ou basé sur notre réalité. De cet univers est issu un monde, avec sa géographie, ses peuples, ses interactions. Du point de vue du scénariste, ce monde est représenté sous forme de données appelées **maps**. Du point de vue du développeur, les **maps** sont les différents niveaux de jeu que votre joueur va parcourir.
@@ -142,51 +150,145 @@ Right-click to show the menu and choose [Plugin Help...] to display the Plugin H
 
 ## Spécifications MV concernant les images
 
-Note : ce qui suit est intégralement dédié à MV. Je laisse qui veut créer les templates pour VX Ace.
+*Note : ce qui suit est intégralement dédié à MV. Je laisse qui veut créer les templates pour VX Ace.*
+
+**Accès rapide**
+
+* [Groupe A (onglet A) - image A1]({{< ref "#groupe-a-onglet-a-image-a1" >}})
 
 ### Informations préalables
 
 * un **tile** fait 48x48 px
-* les **tiles** doivent être assemblés sous formes d'images constituant 5 groupes : A, B, C D et E
-* le groupe A est constitué de plusieurs images et subdivisé en A1, A2, A3, A4 et A5
-* la taille des images est fixe
+* les **tiles** doivent être assemblés sous formes d'images constituant 5 groupes : A, B, C, D et E ;
+* le groupe A est constitué de plusieurs images et subdivisé en A1, A2, A3, A4 et A5 ;
+* les groupes B, C, D et E sont tous constitués d'une seule image ;
+* la taille des images est fixe et dépend du groupe auquel elles sont associées (*voir tableau*) ;
+* un tileset n'a pas à contenir la totalité des images A1, A2, A3, A4, A5, B, C, D et E ;
 
-### Groupe/onglet A
+Pour rappel, ce qu'on appelle communément **tileset** sur les communautés et ce que le logiciel considère comme un **tileset** sont deux choses différentes. Quand on parle de **tilesets** sur les communautés, on parle des images A1, A2, A3, A4, A5, B, C, D et E. Le **tileset** du logiciel est constitué de ces images ET de données supplémentaires.
 
-Rappel : le groupe A contient l'ensemble des **tiles** qui vont constituer la couche basse d'une **map**
+{{< figure src="/images/doc/bdd/tileset-editeur-MV.PNG" alt="Capture d'écran de l'onglet Tileset de RPG Maker MV montrant que le tileset est composé d'images pour les groupes et sous-groupes A1, A2, A3, A4, A5, B et C. Les groupes D et E n'ont pas d'images associées." caption="Ici, on voit que le tileset intitulé SF Outside est constitué de 7 images et contient des données supplémentaires pour chaque image, configurables grâce aux boutons de droite. On peut également associer un mode et des notes au tileset." >}}
 
-Les images qui constituent les sous-groupes A1, A2, A3 et A4 sont des assemblages d'**autotiles**. Ci-dessous, un **autotile**, un élément constitué en réalité de six **tiles** :
+### Les trois types d'autotile
 
-*Image*
+Un **autotile** est un **tile** spécial qui va changer d'apparence en fonction des **tiles** qui l'entourent. Si sur la palette de l'éditeur, on ne voit qu'un **tile** de 48x48 px, en réalité sur l'image, il sera constitué de plusieurs **tiles**. C'est el logiciel qui définira quels **tiles** il placera de manière automatique.
 
-* a. l'**autotile** tel qu'il apparait dans la palette (dimensions d'un **tile**)
-* b. motif avec les bordures à chaque coin (dimensions d'un **tile**)
-* c. motif avec les bordures dans les 8 directions (dimensions d'un carré de quatre **tiles**)
+Il y a trois types d'**autotiles** sur MV : 
 
-Plus précisément, pour les graphistes, considérez que l'**autotile** est découpé ainsi :
+* l'**autotile** classique, qui est utilisé pour faire des bordures, des chemins, couvrir de grandes zones de tapis ou d'herbes hautes ;
+* l'**autotile** de mur, qui est essentiellement utilisé pour placer les murs et les toits en pente ;
+* l'**autotile** de cascade, qui a un fonctionnement un peu différent des deux autres.
+
+L'**autotile** le plus classique est constitué de 6 **tiles**.
+
+{{< figure class="align-left" src="/images/doc/bdd/tileset-autotile-classique-MV.PNG" alt="" caption="Dimensions totales : 96x144 px." >}} 
+
+1. Ce **tile** n'est pas utilisé par le logiciel. Il sert uniquement de repère dans la palette pour identifier rapidement l'**autotile**. Vous pouvez donc le modifier à votre convenance (on peut, par exemple, lui ajouter une icone Poison si le terrain inflige des dégâts).
+1. Ce **tile** sert à faire les coins intérieurs (angles rentrants). 
+1. Ce groupe de 4 **tiles** sert à la fois à faire les coins extérieurs (angles saillants), les bordures et le motif interne.
+
+<div style="clear:both;"></div>
+
+Ce qui intéresse donc les graphistes, ce sont le **tile** 2 et les **tiles** 3a, 3b, 3c et 3d. En pratique, quand le logiciel place un morceau d'**autotile** sur la map, il ne choisit pas directement un de ces 5 tiles. Il découpe au préalable chaque **tile** en quatre et reconstitue un **tile** à partir de quatre morceaux. Le véritable template d'un **autotile** ressemble à ceci :
+
+{{< figure src="/images/doc/bdd/tileset-template-autotile-classique-MV.PNG" alt="" caption="TEMPLATE - Dimensions d'un morceau d'autotile : 24x24 px." >}}
+
+Ce template montre bien comment le logiciel découpe les **tiles** en morceaux de 24x24 px. Chaque morceau est affecté à un "coin" du **tile** reconstitué (symbolisé par les petites flèches). 
+
+{{< figure src="/images/doc/bdd/tileset-template-autotile-classique-MV-exemple.PNG" alt="" caption="Exemples de reconstitution de tiles à partir d'un autotile. En vert : sous-unités utilisées pour le motif central. En bleu, sous-unités utilisées pour les bordures. En rouge, sous-unités utilisées pour les coins externes et internes." >}}
+
+Les plus observateurs auront remarqué qu'il y a un pixel mis en évidence sur le template en bas à droite. Il a un rôle particulier, ce sera expliqué plus loin.
+
+{{< figure class="align-right" src="/images/doc/bdd/tileset-autotile-mur-MV.PNG" alt="" caption="Dimensions totales : 96x96 px." >}}
+
+L'**autotile** de mur ressemble beaucoup à l'**autotile** classique, mais il n'a ni **tile** qui sert de repère, ni bloc réservé aux coins internes. Ceci s'explique par le fait que le mapping avec ce type d'**autotile** se fait en colonne uniquement. Au niveau du logiciel, il est constitué de quatre **tiles**, eux-mêmes subdivisés en quatre morceaux. Le **tile** qui sert de repère dans la palette est constitué des 4 morceaux qui forment les 4 coins.
+
+<div style="clear:both;"></div>
+
+{{< figure src="/images/doc/bdd/tileset-template-autotile-mur-MV.PNG" alt="" caption="TEMPLATE - Dimensions d'un morceau d'autotile : 24x24 px." >}}
+
+Enfin, l'**autotile** de cascade ne fonctionne absolument pas comme les deux autres. Il est constitué de deux **tiles**, eux-mêmes subdivisés en *deux* morceaux de 24x48 px, et pas en quatre morceaux. En particulier, cet **autotile** n'a pas de bordures en haut et en bas et n'a pas de coins.
+
+{{< figure src="/images/doc/bdd/tileset-template-autotile-cascade-MV.PNG" alt="" caption="TEMPLATE - Dimensions d'un morceau d'autotile : 24x48 px." >}}
 
 
 
 
-Tileset Details
+### Notes personnelles
 
-1 tile is 48x48 in size, and tiles need to be grouped in the 5 types of sets, A through E, below.
+* l'élément du haut de l'autotile ne sert vaiment que pour l'affichage dans la palette, aucun intérêt d'y toucher (on peut donc dessiner des symboles dessus)
+* un tile d'autotile est en fait constitué de 4 sous éléments, des mini-tiles de 24x24 px. Ces mini-tiles sont représentés sur les 5 carreaux restants de l'autotile
+* j'ai un exemple d'autotile qui montre les sous-éléments.
 
-Additionally, the specifications for some tiles can change according to the contents set under [Mode] found in [Tilesets] in the database.
-Set A
-
-This set will be used as the lower layer when drawing the map. This set is divided further into 5 parts, with most of them being called [Autotiles], which are composed of special tiles that have their boundary lines automatically created.
-
-Autotiles are, as a rule, arranged in a pattern composed of 6 tiles as seen in the illustration below, making up the basic structure of the tiles.
-
-a
-    Representative Pattern (for displaying in the tile palette)
-b
-    Pattern with boundaries at each corner
-c
-    Group Pattern (refers to group of tiles with one in the center and 1 in each of the 8 directions)
-
+* le coup de l'autotile de type foret, ça a l'air de marcher une fois tous les 36 du mois... je n'arrive pas à le tester
+* réussi ! marche à suivre : recréer le tileset pour que le fichier json je suppose s'actualise. Le truc pas chiant du tout
+* le type forêt marche sur absolument tous les types d'autotiles, même les sols pleins !
+* le pixel en question est bien celui en (8,8) à partir du coin bas droit du groupe de 6 tiles
 If the autotile located in the (8,8) position from the bottom-right is transparent, that autotile will be evaluated as a "forest type". If a forest tile has the bush element assigned to it, character images will not appear as half transparent in the 8 types of tiles below which includes the bottom right and bottom left boundaries.
+
+* il y a une erreur dans l'aide : les éléments du groupe 2, bloc A, ne peuvent pas se superposer à ceux du bloc B, même si al transparence est ajoutée
+* pour world type, il y a encore une subtilité, mais ça ne concerne que le bloc A : la deuxième colonne et la 4eme colonne aparessent sur la palette comme un mix de 1+2 et de 3+4. Sur la map, cela fait aussi un tile combiné => autorise de la transparence, mais en réalité si 1 ou 3 n'est aps transparent, le tile combiné ne sera pas transparent.
+* j'avoue que je ne vois aps bien l'intérêt...
+* je viens d'en saisir l'intérêt : c'est pour fusionner les autotiles de al couche de base, sinon ça ferait des bordures !
+
+* note que ce mécanisme s'applique aussi pour la couche A1, il y a une sorte de mécanisme d'embellissement pour le premier autotile et ses ambellissements
+* l'autotile de cascade est particulier, à tester
+
+* pour les autotiles de murs/toits, c'est le même système en sous-tiles de 24x24 px MAIS 1) il n'y a plus le bloc pour les coins inversés et 2) la représentation se fait avec les coins du gros bloc de 4.
+* pour faire des coins inversés, on passera par des éléments des onglets B, C, D et E.
+* le placement est également altéré : ça fonctionne par colonnes
+* quand on peint avec le pinceau, une fois qu'on a fini une colonne, ne pas hésiter à repasser el pinceau dans el sens opposé pour que l'autotile se forme bien ! Sinon il laisse les bords et n'affiche pas le motif central, sauf étrangement pour l'extrémité pour laquelle on a fini de peindre...
+* étrangement, ce problème en se pose pas quand on utilise l'outil rectangle ou l'outil remplissage...
+
+* les toits du groupe A4 ont à nouveau l'autotile en 6 : on peut faire des coins inversés avec.
+* ceux-là sont réservés pour tout ce qui n'est aps toit en pente, en réalité.
+
+* **Au total, il y a 3 types d'autotiles : ceux en 5 blocs, ceux en 4 blocs (murs et toits en pente) et ceux en bandes (cascades)** Seuls les autotiles du bloc A2 peut être de type alternatif forêt d'après mes tests. à vérifier s'il y a une erreur.
+
+* avec l'astuce du shift, on peut utiliser les autotiles pour obtenir 4 façons d'animer des objets de 1 tile de dimension (par défaut, shift enfoncé, tous les angles internes et enfin bords). C'est aps pratique, mais c'est faisable !
+* les cascades n'offrent que 2 alternatives mais sont beaucoup plsu faciles à placer. Et souvent considérées comme des palces perdues sur le tileset
+
+### Groupe A (onglet A) - image A1
+
+Ce groupe de **tiles** est constitué uniquement d'**autotiles** animés (à deux exceptions près). Les **autotiles** animés sont simplement créés à l'aide de trois **autotiles** non animés. Le logiciel gère seul l'animation en 3 frames, c'est à dire qu'il va boucler automatiquement entre les trois variations de l'**autotile** en jeu.
+
+L'image A1 est de dimensions 768x576 pixels et est assez complexe, il faut bien placer les autotiles au bon endroit pour avoir un rendu correct en jeu.
+
+{{< figure src="/images/doc/bdd/tileset-template-A1-MV.PNG" alt="" caption="TEMPLATE - Dimensions totales : 768x576 px. En vert, éléments servant à décorer la couche basse. En bleu, éléments servant à embellir la couche basse. En rose, autotiles de cascade." >}}
+
+Par convention, aucun de ces **autotiles** ne devrait être passable pour un personnage à pieds. Les **autotiles** des sets A et D sont les seuls **tiles** à laisser passer les barques et les bateaux. Le set B autorise le passage des bateaux mais interdit le passage des barques. Tous les autres **tiles** du **tileset** (donc les sets C et E et tout ce qui est contenu dans les groupes A2, A3, A4, A5 et même les groupes B, C, D et E) ne peuvent laisser passer ni les barques, ni les bateaux !
+
+Cependant, si vous choisissez de rendre les **autotiles** des sets A, B et D passables pour le personnage à pieds, alors ils deviendront bloquants pour les bateaux et les barques.
+
+Compléments d'information :
+
+* le set A est habituellement réservé au **tile** d'océan. Notez que **tile** est au singulier : ce sont des **autotiles** animés, il faut donc 3 **autotiles** pour faire une animation.
+* le set B sert à embellir le set A : sa texture viendra se superposer à celle de l'**autotile** du set A. Ceci permet d'apporter des variations à l'**autotile** A pour que la carte ne soit pas trop monotone. De plus, appliquer cette texture empèchera les barques de passer, mais autorisera toujours les bateaux à passer. Habituellement, on considère que c'est l'**autotile** animé représentant l'eau profonde.
+* les deux sets C servent également à embellir le set A. La différence est que ces deux **autotiles** ne sont pas animés. De plus, appliquer ces textures empêchera tout passage de barques ou de bateaux.
+* les six sets D sont semblables au set A : ils représentent habituellement une texture d'eau animée. Il n'est pas possible de les embellir avec les textures des sets B et C.
+* les six sets E sont habituellement réservés aux cascades. Ils sont composés de trois templates de cascade présentés plus haut empilés verticalement. Là encore, ces **autotiles** interdisent le passage des barques et des bateaux.
+
+| Set | barque | bateau | couche inférieure utilisée | animation |
+|---|---|---|---|---|
+| A | passable | passable | base | oui |
+| B | X | passable | embellissement | oui |
+| C | X | X | embellissement | X |
+| D | passable | passable | base | oui |
+| E | X | X | base | oui |
+
+**Astuce pour les graphistes** : il est tout à fait possible de détourner l'utilisation de ces **autotiles** animés pour créer de petits objets animés sur la map. L'intérêt est de réduire le nombre d'événements purement décoratifs. L'**autotile** classique permet par exemple de stocker jusqu'à cinq objets et l'**autotile** de cascade permet d'en stocker deux. Pour utiliser cette astuce, il faut au préalable être à l'aise avec la technique du `clic droit` puis `Shift+clic gauche`. 
+*Cette astuce mériterait son propre tutoriel.*
+
+
+
+
+
+
+
+
+
+
+
 Part 1
 
 These are 768x576 in size and made up of the 5-pattern blocks as in the illustration above. Basically, tiles in this part will not have a boundary created even if they touch.
